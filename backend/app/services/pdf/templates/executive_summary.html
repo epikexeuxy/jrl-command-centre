@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @page { size: A4; margin: 18mm 16mm; @bottom-center { content: "JRL Command Centre — Confidential"; font-size: 8px; color: #8a8f98; } }
+  body { font-family: "DejaVu Sans", sans-serif; color: #1a1d23; font-size: 10.5px; }
+  .brand { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 3px solid #0f2d52; padding-bottom: 8px; }
+  .brand h1 { font-size: 20px; margin: 0; color: #0f2d52; letter-spacing: 0.5px; }
+  .brand .sub { color: #b8860b; font-size: 11px; font-weight: bold; }
+  h2 { font-size: 13px; color: #0f2d52; border-left: 4px solid #b8860b; padding-left: 8px; margin: 18px 0 8px; }
+  .meta { color: #5a6069; margin-top: 6px; font-size: 9.5px; }
+  .kpis { display: flex; gap: 8px; margin-top: 10px; }
+  .kpi { flex: 1; background: #f4f6fa; border: 1px solid #dde3ec; border-radius: 6px; padding: 8px 10px; }
+  .kpi .label { font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.6px; color: #5a6069; }
+  .kpi .value { font-size: 15px; font-weight: bold; color: #0f2d52; margin-top: 2px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+  th { text-align: left; font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.5px; color: #5a6069; border-bottom: 1.5px solid #0f2d52; padding: 4px 6px; }
+  td { padding: 4px 6px; border-bottom: 0.5px solid #e4e8ef; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .bar-row { display: flex; align-items: center; gap: 8px; margin: 3px 0; }
+  .bar-label { width: 130px; font-size: 9.5px; }
+  .bar-track { flex: 1; background: #eef1f6; border-radius: 3px; height: 10px; }
+  .bar-fill { background: linear-gradient(90deg, #0f2d52, #2d5a8f); height: 10px; border-radius: 3px; }
+  .bar-pct { width: 52px; text-align: right; font-size: 9.5px; font-variant-numeric: tabular-nums; }
+  .warn { margin-top: 14px; font-size: 8.5px; color: #8a6d1a; background: #fdf6e3; border: 1px solid #eadfb8; border-radius: 4px; padding: 6px 8px; }
+  .disclaimer { margin-top: 16px; font-size: 8px; color: #8a8f98; }
+</style>
+</head>
+<body>
+  <div class="brand">
+    <h1>J.R. Laddha Financial Services</h1>
+    <div class="sub">WealthLens · Executive Summary</div>
+  </div>
+  <div class="meta">
+    Client: <b>{{ client.name }}</b> ({{ client.code }}) &nbsp;·&nbsp; Portfolio: <b>{{ portfolio.name }}</b>
+    &nbsp;·&nbsp; As of {{ overview.as_of }} &nbsp;·&nbsp; Generated {{ generated_at }}
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="label">Assets Under Management</div><div class="value">{{ fmt_inr(overview.aum) }}</div></div>
+    <div class="kpi"><div class="label">Invested</div><div class="value">{{ fmt_inr(overview.invested) }}</div></div>
+    <div class="kpi"><div class="label">Absolute Return</div><div class="value">{{ fmt_pct(overview.absolute_return_pct) }}</div></div>
+    {% if performance %}<div class="kpi"><div class="label">XIRR</div><div class="value">{{ fmt_pct(performance.xirr_pct) }}</div></div>{% endif %}
+  </div>
+
+  {% if performance %}
+  <h2>Performance</h2>
+  <table>
+    <tr><th>CAGR</th><th>TWR (ann.)</th><th>TWR (cum.)</th><th>Window</th></tr>
+    <tr>
+      <td>{{ fmt_pct(performance.cagr_pct) }}</td>
+      <td>{{ fmt_pct(performance.twr_pct) }}</td>
+      <td>{{ fmt_pct(performance.twr_cumulative_pct) }}</td>
+      <td>{{ performance.start_date }} → {{ performance.end_date }}</td>
+    </tr>
+  </table>
+  {% endif %}
+
+  {% if risk %}
+  <h2>Risk</h2>
+  <table>
+    <tr><th class="num">Volatility</th><th class="num">Sharpe</th><th class="num">Sortino</th><th class="num">Max Drawdown</th><th class="num">VaR 95 (1d)</th><th class="num">Beta</th><th class="num">Alpha</th></tr>
+    <tr>
+      <td class="num">{{ fmt_pct(risk.volatility_pct) }}</td>
+      <td class="num">{{ fmt_num(risk.sharpe) }}</td>
+      <td class="num">{{ fmt_num(risk.sortino) }}</td>
+      <td class="num">{{ fmt_pct(risk.max_drawdown_pct) }}</td>
+      <td class="num">{{ fmt_pct(risk.var_95_pct) }}</td>
+      <td class="num">{{ fmt_num(risk.beta) }}</td>
+      <td class="num">{{ fmt_pct(risk.alpha_pct) }}</td>
+    </tr>
+  </table>
+  {% endif %}
+
+  <h2>Asset Allocation</h2>
+  {% for slice in overview.allocation_by_asset_class %}
+  <div class="bar-row">
+    <div class="bar-label">{{ slice.label }}</div>
+    <div class="bar-track"><div class="bar-fill" style="width: {{ slice.weight_pct }}%"></div></div>
+    <div class="bar-pct">{{ '%.1f'|format(slice.weight_pct) }}%</div>
+  </div>
+  {% endfor %}
+
+  <h2>Holdings</h2>
+  <table>
+    <tr><th>Name</th><th>Type</th><th class="num">Units</th><th class="num">Price</th><th class="num">Market Value</th><th class="num">P&amp;L</th><th class="num">Weight</th></tr>
+    {% for h in overview.holdings %}
+    <tr>
+      <td>{{ h.name }}</td>
+      <td>{{ h.instrument_type }}</td>
+      <td class="num">{{ '%.3f'|format(h.units) }}</td>
+      <td class="num">{{ fmt_inr(h.price) }}</td>
+      <td class="num">{{ fmt_inr(h.market_value) }}</td>
+      <td class="num">{{ fmt_pct(h.unrealized_pnl_pct) }}</td>
+      <td class="num">{{ '%.1f'|format(h.weight_pct) }}%</td>
+    </tr>
+    {% endfor %}
+  </table>
+
+  {% if overview.warnings %}
+  <div class="warn"><b>Data notes:</b> {{ overview.warnings | join(' · ') }}</div>
+  {% endif %}
+
+  <div class="disclaimer">
+    Prepared by JRL Command Centre for internal advisory use. Mutual fund NAVs sourced live from AMFI via MFAPI.in.
+    Holdings marked static_valuation are valued at manual mark or cost. This document is not investment advice.
+  </div>
+</body>
+</html>

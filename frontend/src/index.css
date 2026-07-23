@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+/* ---- JRL Command Centre design tokens ---- */
+@theme {
+  --color-navy-950: #0a1f3d;
+  --color-navy-900: #0f2d52;
+  --color-navy-800: #16406f;
+  --color-navy-700: #1f558c;
+  --color-gold-500: #b8860b;
+  --color-gold-400: #d4a017;
+  --font-display: "Georgia", "Times New Roman", serif;
+}
+
+html, body, #root { height: 100%; }
+body { @apply bg-slate-50 text-slate-900 antialiased; }

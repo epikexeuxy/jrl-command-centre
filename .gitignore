@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# App runtime artefacts
+backend/jrl_dev.db
+backend/var/
+backend/data/uploads/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Env & editor
+.env
+.DS_Store
+.idea/
+.vscode/

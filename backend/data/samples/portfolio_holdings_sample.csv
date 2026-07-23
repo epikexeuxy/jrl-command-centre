@@ -1,0 +1,5 @@
+instrument_type,identifier,name,units,avg_cost,asset_class,sector,geography,manual_price
+MUTUAL_FUND,122639,Parag Parikh Flexi Cap Fund - Direct Plan - Growth,1500,72.50,EQUITY,Diversified Equity,India,
+MUTUAL_FUND,118989,HDFC Mid Cap Fund - Growth Option - Direct Plan,800,210.00,EQUITY,Mid Cap Equity,India,
+MUTUAL_FUND,120716,UTI Nifty 50 Index Fund - Growth Option - Direct,2000,155.00,EQUITY,Large Cap Index,India,
+OTHER,JRL-PE-001,Unlisted PE Stake (mark-to-model),1,2500000,ALTERNATIVES,Private Equity,India,3100000

@@ -1,0 +1,6 @@
+date,txn_type,identifier,units,price,amount,description
+2025-07-22,BUY,122639,1050,68.20,71610.00,Initial allocation
+2025-07-22,BUY,118989,560,217.50,121800.00,Initial allocation
+2026-03-24,BUY,122639,450,80.10,36045.00,Top-up
+2026-03-24,BUY,118989,240,202.87,48688.80,Top-up
+2026-05-15,DIVIDEND,122639,,,1250.00,IDCW payout example

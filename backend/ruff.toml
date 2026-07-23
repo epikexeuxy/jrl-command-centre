@@ -1,0 +1,9 @@
+line-length = 120
+target-version = "py312"
+
+[lint]
+select = ["E", "F", "W", "I"]
+
+[lint.per-file-ignores]
+# conftest must set environment variables before importing any app module
+"tests/conftest.py" = ["E402"]
